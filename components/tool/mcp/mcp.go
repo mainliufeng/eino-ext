@@ -66,6 +66,16 @@ func GetTools(ctx context.Context, conf *Config) ([]tool.BaseTool, error) {
 			return nil, fmt.Errorf("conv mcp tool input schema fail(unmarshal): %w, tool name: %s", err, t.Name)
 		}
 
+		if len(inputSchema.Properties) == 0 {
+			inputSchema.Properties = openapi3.Schemas{
+				"_": &openapi3.SchemaRef{
+					Value: &openapi3.Schema{
+						Type: "string",
+					},
+				},
+			}
+		}
+
 		ret = append(ret, &toolHelper{
 			cli: conf.Cli,
 			info: &schema.ToolInfo{
